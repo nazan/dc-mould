@@ -1,0 +1,57 @@
+version: '2'
+services:
+  {{data.app.name}}:
+    image: ${MY_REGISTRY}/phpfpm-laravel6-nvm-xdebug
+    working_dir: /var/www
+    volumes:
+      - ./{{data.app.name}}:/var/www
+      - ./{{data.app.name}}-dc:/usr/src/aidock/build
+      - ./{{data.app.name}}-dc/extra.ini:/usr/local/etc/php/conf.d/extra.ini
+    extra_hosts:
+      - "{{data.app.name}}-database:{{data.app.network_prefix}}.7"
+    depends_on:
+      - {{data.app.name}}-database
+    networks:
+      mydockernet:
+        ipv4_address: {{data.app.network_prefix}}.16
+
+  {{data.app.name}}-web:
+    image: ${MY_REGISTRY}/generic-nginx
+    working_dir: /var/www
+    volumes:
+      - ./{{data.app.name}}:/var/www
+      - ./{{data.app.name}}-dc/vhost.conf:/etc/nginx/conf.d/default.conf
+      - ./{{data.app.name}}-dc/log/nginx-error.log:/var/log/nginx/app-error.log
+      - ./{{data.app.name}}-dc/log/nginx-access.log:/var/log/nginx/app-access.log
+    depends_on:
+      - {{data.app.name}}
+    networks:
+      mydockernet:
+        ipv4_address: {{data.app.network_prefix}}.17
+
+  {{data.app.name}}-database:
+    image: mysql:5.7.23
+    volumes:
+      - dbdata:/var/lib/mysql
+    environment:
+      - "MYSQL_DATABASE=main"
+      - "MYSQL_USER=user"
+      - "MYSQL_PASSWORD=password"
+      - "MYSQL_ROOT_PASSWORD=password"
+    ports:
+      - "33062:3306"
+    networks:
+      mydockernet:
+        ipv4_address: {{data.app.network_prefix}}.7
+
+volumes:
+  dbdata:
+
+networks:
+  mydockernet:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: {{data.app.network_prefix}}.0/24
+          gateway: {{data.app.network_prefix}}.1
