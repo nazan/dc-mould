@@ -8,8 +8,8 @@ services:
       - ./{{data.app.name}}-dc:/usr/src/aidock/build
       - ./{{data.app.name}}-dc/extra.ini:/usr/local/etc/php/conf.d/extra.ini
       - ./{{data.app.name}}-dc/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-      - ./{{data.app.name}}/.npm-appuser:/home/appuser/.npm
-      - ./{{data.app.name}}/.npm:/root/.npm
+      - ./{{data.app.name}}-dc/.npm-appuser:/home/appuser/.npm
+      - ./{{data.app.name}}-dc/.npm:/root/.npm
     extra_hosts:
       - "{{data.app.name}}-database:{{data.app.network_prefix}}.7"
     env_file: ./{{data.app.name}}-dc/.env
