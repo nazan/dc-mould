@@ -25,7 +25,7 @@ def newLaravel():
     if not basePath.startswith(os.sep):
         basePath = os.path.join(os.getcwd(), basePath)
 
-    print("Creating docker environment folder (if it does not exist already).")
+    print("Creating docker environment folder (if it does not already exist).")
     os.makedirs(basePath, exist_ok=True)
 
     try:
@@ -39,7 +39,8 @@ def newLaravel():
         'app': {
             'name': projectName,
             'network_prefix': '',
-            'url': ''
+            'url': '',
+            'laravel_version': ''
         },
         'ide': {
             'key': 'phpstorm' # needed for xdebug.
@@ -51,6 +52,7 @@ def newLaravel():
 
     userInput['app']['network_prefix'] = sess.prompt('Enter class C network ID prefix (eg. 192.168.42): ')
     userInput['app']['url'] = sess.prompt('Enter URL to access your app (eg. myawesomeapp.local): ')
+    userInput['app']['laravel_version'] = sess.prompt('Enter Laravel version to use (v6.x.x is recommended): ', default='v6.18.8')
 
     stubLaravel(userInput)
 
@@ -61,12 +63,13 @@ def newLaravel():
 
 def stubLaravel(userInput):
     name = userInput['app']['name']
+    laravelVersion = userInput['app']['laravel_version']
 
     out = create_output()
     myCwd = os.getcwd()
 
     if not os.path.exists(os.path.join(myCwd, name)):
-        subprocess.call("docker run -it --rm --user $(id -u):$(id -g) -v $(pwd):/app -v ${COMPOSER_HOME:-$HOME/.composer}:/tmp composer create-project --prefer-dist laravel/laravel %s" % (name), shell=True, stdout=out, stderr=out, cwd=myCwd)
+        subprocess.call("docker run -it --rm --user $(id -u):$(id -g) -v $(pwd):/app -v ${COMPOSER_HOME:-$HOME/.composer}:/tmp composer create-project --prefer-dist laravel/laravel %s %s" % (name, laravelVersion), shell=True, stdout=out, stderr=out, cwd=myCwd)
     else:
         print("File or directory with given project name already exists. Stub creation skipped.")
 
@@ -114,7 +117,6 @@ def stubDockerEnvironment(userInput):
             targetFile.write(tpl.render(data=userInput)) 
 
     os.chmod(os.path.join(myCwd, targetRootName, 'prepare.sh'), 0o755)
-    os.chmod(os.path.join(myCwd, targetRootName, 'rr-prepare.sh'), 0o755)
 
 def main():    
     session = PromptSession()
