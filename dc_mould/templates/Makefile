@@ -46,6 +46,8 @@ down:
 
 .PHONY: {{data.app.name}}-touch
 {{data.app.name}}-touch:
+	cp -n ./.env.example ./.env
+	
 	cp -n ./{{data.app.name}}/.env.example ./{{data.app.name}}/.env
 	touch ./{{data.app.name}}/storage/logs/laravel.log
 	

@@ -75,20 +75,20 @@ def stubLaravel(userInput):
 
     lines = []
 
-    with open(os.path.join(myCwd, name, '.env'), 'r') as fh:
+    with open(os.path.join(myCwd, name, '.env.example'), 'r') as fh:
         text = fh.read()
 
         if not re.search(r"APP_URL=http://%s" % (userInput['app']['url']), text):
-            lines.append("sed -i 's/APP_URL=http:\/\/localhost/APP_URL=http:\/\/%s/g' .env" % (userInput['app']['url']))
+            lines.append("sed -i 's/APP_URL=http:\/\/localhost/APP_URL=http:\/\/%s/g' .env.example" % (userInput['app']['url']))
 
         if not re.search(r"DB_HOST=%s-database" % (name), text):
-            lines.append("sed -i 's/DB_HOST=127.0.0.1/DB_HOST=%s-database/g' .env" % (name))
+            lines.append("sed -i 's/DB_HOST=127.0.0.1/DB_HOST=%s-database/g' .env.example" % (name))
 
         if not re.search(r'DB_DATABASE=main', text):
-            lines.append("sed -i 's/DB_DATABASE=laravel/DB_DATABASE=main/g' .env")
+            lines.append("sed -i 's/DB_DATABASE=laravel/DB_DATABASE=main/g' .env.example")
 
         if not re.search(r'DB_PASSWORD=password', text):
-            lines.append("sed -i 's/DB_PASSWORD=/DB_PASSWORD=password/g' .env")
+            lines.append("sed -i 's/DB_PASSWORD=/DB_PASSWORD=password/g' .env.example")
 
     for cmdLine in lines:
         subprocess.call(cmdLine, shell=True, stdout=out, stderr=out, cwd=os.path.join(myCwd, name))
@@ -123,7 +123,7 @@ def main():
 
     while True:
         try:
-            print("1. Make Laravel 6 project.\r\n")
+            print("1. Make Laravel project.\r\n")
             text = session.prompt('> ')
         except KeyboardInterrupt:
             continue
