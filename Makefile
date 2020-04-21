@@ -14,10 +14,10 @@ build-dev:
 
 .PHONY: start
 start:
-	docker run -it --rm -v $(HOME)/.composer:/tmp --user $(UID) -v $$(pwd)/dc_mould:/home/user/app -v $$(pwd)/dist:/home/user/dist py38int bash
+	docker run -it --rm -v $(HOME)/.composer:/tmp --user $(UID) -v $$(pwd)/dc-mould:/home/user/app -v $$(pwd)/dist:/home/user/dist py38int bash
 
 .PHONY: build-prod
 build-prod:
-	docker build -f production.dockerfile -t dc_mould .
+	docker build -f production.dockerfile -t dc-mould .
 	
-	@echo "Production image of name 'dc_mould' built successfully."
+	@echo "Production image of name 'dc-mould' built successfully."
