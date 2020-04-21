@@ -1,12 +1,20 @@
-# dc-mould
-Docker development environment builder.
+# Docker based Laravel development boilerplate
 
+First of all install 'make'.
 
+## Development image (Python interpreter)
 
-## Release archive creation
+    make build-dev
 
-First, make sure to run `./packager.sh`.
-Afterwards, while at root of project do the following:
+## Shell access to Python image
+    
+    make start
 
-cd dist && zip -r ../release/v1-x-x.zip . * && cd -
+## Build a production image
+    
+    make build-prod
+
+## For faster composer downloads use this when running dc_mould
+
+    docker run -it --rm -v $HOME/.composer:/tmp -v /your/projects/root:/home/user/dist dc_mould
 
