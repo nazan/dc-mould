@@ -10,6 +10,8 @@ import sys
 
 import re
 
+import shutil 
+
 
 if getattr(sys, 'frozen', False):
     scriptPath = sys._MEIPASS
@@ -20,10 +22,9 @@ else:
 def newLaravel():
     sess = PromptSession()
 
-    basePath = sess.prompt('Enter project name (use leading slash to input name with absolute path): ')
+    projectName = sess.prompt('Enter project name: ')
 
-    if not basePath.startswith(os.sep):
-        basePath = os.path.join(os.getcwd(), basePath)
+    basePath = os.path.join("/", "home", "user", "dist", projectName)
 
     print("Creating docker environment folder (if it does not already exist).")
     os.makedirs(basePath, exist_ok=True)
@@ -32,8 +33,6 @@ def newLaravel():
         os.chdir(basePath)
     except OSError:
         print("Can't change to given directory.") 
-
-    projectName = os.path.basename(basePath)
 
     userInput = {
         'app': {
@@ -62,36 +61,42 @@ def newLaravel():
 
 
 def stubLaravel(userInput):
-    name = userInput['app']['name']
+    appName = userInput['app']['name']
     laravelVersion = userInput['app']['laravel_version']
 
     out = create_output()
     myCwd = os.getcwd()
 
-    if not os.path.exists(os.path.join(myCwd, name)):
-        subprocess.call("docker run -it --rm --user $(id -u):$(id -g) -v $(pwd):/app -v ${COMPOSER_HOME:-$HOME/.composer}:/tmp composer create-project --prefer-dist laravel/laravel %s %s" % (name, laravelVersion), shell=True, stdout=out, stderr=out, cwd=myCwd)
+    if not os.path.exists(os.path.join(myCwd, appName)):
+        subprocess.call("composer create-project --prefer-dist laravel/laravel %s %s" % (appName, laravelVersion), shell=True, stdout=out, stderr=out, cwd=myCwd)
     else:
         print("File or directory with given project name already exists. Stub creation skipped.")
 
     lines = []
 
-    with open(os.path.join(myCwd, name, '.env.example'), 'r') as fh:
+    envExample = os.path.join(myCwd, appName, '.env.example')
+
+    with open(envExample, 'r') as fh:
         text = fh.read()
 
         if not re.search(r"APP_URL=http://%s" % (userInput['app']['url']), text):
-            lines.append("sed -i 's/APP_URL=http:\/\/localhost/APP_URL=http:\/\/%s/g' .env.example" % (userInput['app']['url']))
+            lines.append(r"sed -i 's/APP_URL=http:\/\/localhost/APP_URL=http:\/\/%s/g' .env.example" % (userInput['app']['url']))
 
-        if not re.search(r"DB_HOST=%s-database" % (name), text):
-            lines.append("sed -i 's/DB_HOST=127.0.0.1/DB_HOST=%s-database/g' .env.example" % (name))
+        if not re.search(r"DB_HOST=%s-database" % (appName), text):
+            lines.append(r"sed -i 's/DB_HOST=127.0.0.1/DB_HOST=%s-database/g' .env.example" % (appName))
 
         if not re.search(r'DB_DATABASE=main', text):
-            lines.append("sed -i 's/DB_DATABASE=laravel/DB_DATABASE=main/g' .env.example")
+            lines.append(r"sed -i 's/DB_DATABASE=laravel/DB_DATABASE=main/g' .env.example")
 
         if not re.search(r'DB_PASSWORD=password', text):
-            lines.append("sed -i 's/DB_PASSWORD=/DB_PASSWORD=password/g' .env.example")
+            lines.append(r"sed -i 's/DB_PASSWORD=/DB_PASSWORD=password/g' .env.example")
 
     for cmdLine in lines:
-        subprocess.call(cmdLine, shell=True, stdout=out, stderr=out, cwd=os.path.join(myCwd, name))
+        subprocess.call(cmdLine, shell=True, stdout=out, stderr=out, cwd=os.path.join(myCwd, appName))
+
+    shutil.copy(envExample, os.path.join(myCwd, appName, '.env')) 
+
+    
 
 
 def stubDockerEnvironment(userInput):
