@@ -12,9 +12,13 @@ build-dev:
 	
 	@echo "Development image of name 'py38int' built successfully. Now run 'make start' to start development."
 
+
 .PHONY: start
 start:
 	docker run -it --rm -v $(HOME)/.composer:/tmp --user $(UID) -v $$(pwd)/dc-mould:/home/user/app -v $$(pwd)/dist:/home/user/dist py38int bash
+
+	@echo "Good bye."
+
 
 .PHONY: build-prod
 build-prod:
