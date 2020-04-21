@@ -11,6 +11,8 @@ services:
       - ./{{data.app.name}}-dc/.npm-appuser:/home/appuser/.npm
       - ./{{data.app.name}}-dc/.npm:/root/.npm
     env_file: ./{{data.app.name}}-dc/.env
+    extra_hosts:
+      - "{{data.app.name}}-database:{{data.app.network_prefix}}.7"
     depends_on:
       - {{data.app.name}}-database
     networks:
