@@ -14,7 +14,7 @@ First of all install 'make'.
     
     make build-prod
 
-## For faster composer downloads, use this when running dc-mould image
+## Use this when running dc-mould image
 
     docker run -it --rm -v $HOME/.composer:/tmp -v /your/projects/root:/home/user/dist dc-mould
 

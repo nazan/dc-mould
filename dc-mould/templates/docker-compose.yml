@@ -10,6 +10,7 @@ services:
       - ./{{data.app.name}}-dc/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
       - ./{{data.app.name}}-dc/.npm-appuser:/home/appuser/.npm
       - ./{{data.app.name}}-dc/.npm:/root/.npm
+      - ${HOME}/.composer:/home/appuser/.composer
     env_file: ./{{data.app.name}}-dc/.env
     extra_hosts:
       - "{{data.app.name}}-database:{{data.app.network_prefix}}.7"
