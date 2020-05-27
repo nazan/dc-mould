@@ -15,7 +15,7 @@ THIS_FILE := $(lastword $(MAKEFILE_LIST))
 
 .PHONY: {{data.app.name}}-prepare
 {{data.app.name}}-prepare: {{data.app.name}}-touch
-	docker-compose exec --user root {{data.app.name}} /usr/src/aidock/build/prepare.sh
+	docker-compose exec --user $(UID):$(GID) {{data.app.name}} /usr/src/aidock/build/prepare.sh
 
 
 .PHONY: prepare-all

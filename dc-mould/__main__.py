@@ -68,7 +68,7 @@ def stubLaravel(userInput):
     myCwd = os.getcwd()
 
     if not os.path.exists(os.path.join(myCwd, appName)):
-        subprocess.call("composer create-project --prefer-dist laravel/laravel %s %s" % (appName, laravelVersion), shell=True, stdout=out, stderr=out, cwd=myCwd)
+        subprocess.call("composer create-project --no-install --no-dev --no-scripts laravel/laravel %s %s" % (appName, laravelVersion), shell=True, stdout=out, stderr=out, cwd=myCwd)
     else:
         print("File or directory with given project name already exists. Stub creation skipped.")
 
