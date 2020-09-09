@@ -1,7 +1,21 @@
 version: '2'
+
+{%- macro render_main_service_image(data_in) -%}
+{% if data_in.docker.host_images_locally -%}
+build:
+  context: ./{{data_in.app.name}}-dc
+  dockerfile: php-apache-nodejs.dockerfile
+  args:
+    - UID
+    - GID
+{%- else -%}
+image: ${MY_REGISTRY}/phpapache-laravel6-node-xdebug
+{%- endif %}
+{%- endmacro %}
+
 services:
   {{data.app.name}}:
-    image: ${MY_REGISTRY}/phpapache-laravel6-node-xdebug
+{{ render_main_service_image(data)|indent(4, True) }}
     working_dir: /var/www/html
     volumes:
       - ./{{data.app.name}}:/var/www/html

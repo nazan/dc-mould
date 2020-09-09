@@ -19,7 +19,7 @@ else:
     scriptPath = os.path.dirname(os.path.realpath(__file__))
 
 
-def newLaravel():
+def newLaravel(host_images_locally=False):
     sess = PromptSession()
 
     projectName = sess.prompt('Enter project name: ')
@@ -46,6 +46,9 @@ def newLaravel():
         },
         'host': {
             'ip': '127.0.0.1' # needed for xdebug.
+        },
+        'docker': {
+            'host_images_locally': host_images_locally
         }
     }
 
@@ -129,6 +132,7 @@ def main():
     while True:
         try:
             print("1. Make Laravel project.\r\n")
+            print("2. Make Laravel project (Host images locally).\r\n")
             text = session.prompt('> ')
         except KeyboardInterrupt:
             continue
@@ -137,6 +141,8 @@ def main():
         else:
             if text == '1':
                 newLaravel()
+            if text == '2':
+                newLaravel(host_images_locally = True)
 
                 print('You may now exit and start building your kickass application.')
                 
