@@ -31,3 +31,9 @@ RUN mkdir -p /home/user/dist
 
 RUN mkdir -p /home/user/app
 WORKDIR /home/user/app
+
+USER root
+
+RUN composer self-update
+
+USER user
